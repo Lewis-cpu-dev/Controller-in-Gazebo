@@ -110,18 +110,19 @@ class vehicleController():
         min_ld, max_ld = 5, 30
         l_d_min = np.clip(K_dd * curr_vel, min_ld, max_ld)
         tar_x,tar_y = target_point
-        l_d = np.linalg.norm(wp-[curr_x,curr_y])
-        if np.linalg.norm(wp-[curr_x,curr_y])>l_d_min:
-            target_yaw = math.atan2(tar_x-curr_x , tar_y-curr_y )
-            alpha = math.abs(target_yaw-curr_yaw)
-            target_steering = math.atan2((2*self.L*math.sin(alpha)/l_d))
+        l_d = np.linalg.norm(np.array([tar_x-curr_x,tar_y-curr_y]))
+        if l_d > l_d_min:
+            target_yaw = math.atan2(tar_y-curr_y, tar_x-curr_x)
+            alpha = math.fabs(target_yaw-curr_yaw)
+            target_steering = math.atan(2*self.L*math.sin(alpha)/l_d)
             return target_steering
         for wp in future_unreached_waypoints:
             tar_x,tar_y = wp
-            if np.linalg.norm(wp-[curr_x,curr_y])>l_d:
-                target_yaw = math.atan2(tar_x-curr_x , tar_y-curr_y )
+            if np.linalg.norm(np.array([tar_x-curr_x,tar_y-curr_y])) > l_d_min:
+                target_yaw = math.atan2(tar_y-curr_y, tar_x-curr_x)
+                # alpha = math.abs(target_yaw-curr_yaw)
                 alpha = math.abs(target_yaw-curr_yaw)
-                target_steering = math.atan2((2*self.L*math.sin(alpha)/l_d))
+                target_steering = math.atan((2*self.L*math.sin(alpha)/l_d))
                 break
         ####################### TODO: Your TASK 3 code starts Here #######################
         return target_steering
